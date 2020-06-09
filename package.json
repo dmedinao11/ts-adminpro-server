@@ -1,0 +1,28 @@
+{
+    "name": "node-ts-config",
+    "version": "1.0.0",
+    "description": "Node basic setup using express and TS",
+    "main": "index.js",
+    "scripts": {
+        "ts": "tsc -w",
+        "dev": "nodemon ./build/server.js",
+        "start": "tsc && node ./build/server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/dmedinao11/ts-node-express-config.git"
+    },
+    "author": "dmedinao",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/dmedinao11/ts-node-express-config/issues"
+    },
+    "homepage": "https://github.com/dmedinao11/ts-node-express-config#readme",
+    "dependencies": {
+        "@types/express": "^4.17.6",
+        "@types/morgan": "^1.9.0",
+        "@types/node": "^14.0.11",
+        "express": "^4.17.1",
+        "nodemon": "^2.0.4"
+    }
+}
