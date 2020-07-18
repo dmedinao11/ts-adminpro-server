@@ -14,8 +14,8 @@ const index_routes_1 = __importDefault(require("./routes/index.routes"));
 const connection_db_1 = require("./database/connection.db");
 class Server {
     constructor() {
-        this.app = express_1.default();
         dotenv_1.config(); //Using dotenv package for launch enviroment variables
+        this.app = express_1.default();
         this.config(); //Set server's configuration
     }
     config() {

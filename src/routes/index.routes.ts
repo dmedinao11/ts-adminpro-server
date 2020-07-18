@@ -1,20 +1,31 @@
-import { Router } from "express";
+import { Router, Response } from "express";
+
+//Routes
+import userRoutes from "./user.routes"; // --> api/users
+import authRoutes from "./auth.routes"; // --> api/login
+
+//Constants
 
 class IndexRoutes {
-  public router: Router;
+  public routes: Router[];
 
   constructor() {
-    this.router = this.setRoutes();
+    this.routes = this.setRoutes();
   }
 
-  public setRoutes(): Router {
-    let routes = Router();
+  public setRoutes(): Router[] {
+    let mainRouter = Router();
 
-    routes.get("/", (req, res) => res.json({ data: "Hola" }));
+    mainRouter.get("/", (req, res) => res.json({ data: "Hola" }));
 
-    return routes;
+    return [mainRouter, userRoutes, authRoutes];
   }
 }
 
+export function sendError(res: Response, error: any): void {
+  res.status(500).json({ msg: "Error interno, revisar logs", error });
+  throw Error("[ERROR]");
+}
+
 const routes = new IndexRoutes();
-export default routes.router;
+export default routes.routes;

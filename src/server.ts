@@ -15,8 +15,8 @@ class Server {
   public app: express.Application;
 
   constructor() {
-    this.app = express();
     launchENV(); //Using dotenv package for launch enviroment variables
+    this.app = express();
     this.config(); //Set server's configuration
   }
 
@@ -36,6 +36,7 @@ class Server {
         console.error(error);
         throw new Error("[DB] Error in database connection");
       });
+
     //Routes
     this.app.use(IndexRoutes);
   }
