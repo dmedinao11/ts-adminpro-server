@@ -5,7 +5,7 @@ import fs from "fs";
 import UserModel from "../database/models/user.model";
 import DoctorModel from "../database/models/doctor.model";
 import HospitalModel from "../database/models/hospital.model";
-import { IResponse } from '../models/http.models';
+import { IResponse } from "../models/http.models";
 
 //Utilities
 import fileUpload from "express-fileupload";
@@ -55,7 +55,7 @@ export default class UploadHelper {
 
         case "doctors":
           const doctor = await DoctorModel.findById(id);
-          if (!doctor) return { status: 400, msg: "Usuario no encontrado" };
+          if (!doctor) return { status: 400, msg: "Doctor no encontrado" };
 
           console.log("No debería");
 
@@ -72,8 +72,7 @@ export default class UploadHelper {
 
         case "hospitals":
           const hospital = await HospitalModel.findById(id);
-          if (!hospital)
-            return { status: 400, msg: "Usuario no encontrado" };
+          if (!hospital) return { status: 400, msg: "Hospital no encontrado" };
 
           const olderImgHospital = hospital["img"];
           const olderPathHospital = `src/uploads/${collection}/${olderImgHospital}`;
