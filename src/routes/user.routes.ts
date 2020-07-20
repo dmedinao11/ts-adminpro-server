@@ -25,6 +25,7 @@ class UserRoutes {
     router.post(
       this.URI,
       [
+        //Middlewares
         check("name", "El nombre es requerido").not().isEmpty(),
         check("password", "La contraseña es requerida").not().isEmpty(),
         check("email", "El email es requerido").not().isEmpty(),
@@ -63,8 +64,14 @@ class UserRoutes {
   private async getUsers(req: Request, res: Response) {
     try {
       const reqUserUid = req["uid"];
-      const users = await UserModel.find({}, "name role googleAuth email");
-      res.json({ users, reqUserUid });
+      const skipFrom = Number(req.query["from"]) || 0;
+
+      const [users, total] = await Promise.all([
+        UserModel.find({}, "name role email").skip(skipFrom).limit(5),
+        UserModel.count({}),
+      ]);
+
+      res.json({ users, reqUserUid, total });
     } catch (error) {
       sendError(res, error);
     }

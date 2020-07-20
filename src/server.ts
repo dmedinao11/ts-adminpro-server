@@ -3,6 +3,7 @@ import express from "express";
 import morgan from "morgan";
 import { config as launchENV } from "dotenv";
 import cors from "cors";
+import fileUpload from "express-fileupload";
 
 //Routes
 import IndexRoutes from "./routes/index.routes";
@@ -26,6 +27,7 @@ class Server {
 
     this.app.use(morgan("dev")); //Using morgan for restart server
     this.app.use(express.json());
+    this.app.use(fileUpload());
     this.app.use(express.urlencoded({ extended: false }));
     this.app.use(cors()); //Using cors for allow all domain connections
 

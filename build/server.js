@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 const morgan_1 = __importDefault(require("morgan"));
 const dotenv_1 = require("dotenv");
 const cors_1 = __importDefault(require("cors"));
+const express_fileupload_1 = __importDefault(require("express-fileupload"));
 //Routes
 const index_routes_1 = __importDefault(require("./routes/index.routes"));
 //DB
@@ -23,6 +24,7 @@ class Server {
         this.app.set("port", process.env.PORT || 3000); //Setting port
         this.app.use(morgan_1.default("dev")); //Using morgan for restart server
         this.app.use(express_1.default.json());
+        this.app.use(express_fileupload_1.default());
         this.app.use(express_1.default.urlencoded({ extended: false }));
         this.app.use(cors_1.default()); //Using cors for allow all domain connections
         //DB

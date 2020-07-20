@@ -2,7 +2,11 @@ import { Router, Response } from "express";
 
 //Routes
 import userRoutes from "./user.routes"; // --> api/users
+import hospitalRoutes from "./hospital.routes"; // --> api/hospitals
+import doctorRoutes from "./doctor.routes"; // --> api/hospitals
 import authRoutes from "./auth.routes"; // --> api/login
+import searchRoutes from "./search.routes"; //
+import uploadRoutes from "./upload.routes"; // --> api/upload/:collection/:id
 
 //Constants
 
@@ -18,7 +22,15 @@ class IndexRoutes {
 
     mainRouter.get("/", (req, res) => res.json({ data: "Hola" }));
 
-    return [mainRouter, userRoutes, authRoutes];
+    return [
+      mainRouter,
+      userRoutes,
+      authRoutes,
+      hospitalRoutes,
+      doctorRoutes,
+      searchRoutes,
+      uploadRoutes,
+    ];
   }
 }
 
