@@ -31,8 +31,12 @@ class HospitalRoutes {
       ],
       this.postHospitals
     );
-    router.put(`${this.URI}/:uid`, [], this.putHospital);
-    router.delete(`${this.URI}/:uid`, [], this.deleteHospital);
+    router.put(`${this.URI}/:id`, [
+      tokenValidator,
+      check('name', 'El nombre a actualizar es requerido').not().isEmpty(),
+      fieldsValidators
+    ], this.putHospital);
+    router.delete(`${this.URI}/:id`, [tokenValidator], this.deleteHospital);
 
     return router;
   }
@@ -67,6 +71,21 @@ class HospitalRoutes {
 
   private async putHospital(req: Request, res: Response) {
     try {
+      const uid = req["uid"];
+      const id = req.params['id'];
+      const hospital = await HospitalModel.findById(id);
+
+      if (!hospital) return res.status(400).json({ msg: 'Hospital no encontrado' });
+
+
+      const toUpdate = {
+        createdBy: uid,
+        ...req.body
+      };
+
+      const updatedHospital = await HospitalModel.findByIdAndUpdate(id, toUpdate, { new: true });
+
+      res.json(updatedHospital);
     } catch (error) {
       sendError(res, error);
     }
@@ -74,6 +93,14 @@ class HospitalRoutes {
 
   private async deleteHospital(req: Request, res: Response) {
     try {
+      const id = req.params['id'];
+      const hospital = await HospitalModel.findById(id);
+
+      if (!hospital) return res.status(400).json({ msg: 'Hospital no encontrado' });
+
+      const deletedHospital = await HospitalModel.findByIdAndDelete(id);
+
+      res.json(deletedHospital);
     } catch (error) {
       sendError(res, error);
     }

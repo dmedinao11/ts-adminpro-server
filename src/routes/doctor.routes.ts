@@ -35,8 +35,16 @@ class DoctorRoutes {
       ],
       this.postDoctors
     );
-    router.put(`${this.URI}/:uid`, [], this.putDoctor);
-    router.delete(`${this.URI}/:uid`, [], this.deleteDoctor);
+    router.put(`${this.URI}/:id`, [
+      tokenValidator,
+      check("name", "El nombre del médico es requrido").not().isEmpty(),
+      check(
+        "hospital",
+        "La identificación del hospital es inválida"
+      ).isMongoId(),
+      fieldsValidators,
+    ], this.putDoctor);
+    router.delete(`${this.URI}/:id`, [tokenValidator], this.deleteDoctor);
 
     return router;
   }
@@ -81,6 +89,25 @@ class DoctorRoutes {
 
   private async putDoctor(req: Request, res: Response) {
     try {
+      const uid = req["uid"];
+      const id = req.params['id'];
+      const hospitalId = req.body.hospital;
+
+      const hospital = await HospitalModel.findById(hospitalId);
+      if (!hospital) return res.status(400).json({ msg: 'Hospital no encontrado' });
+
+      const doctor = await DoctorModel.findById(id);
+      if (!doctor) return res.status(400).json({ msg: 'Doctor no encontrado' });
+
+
+      const toUpdate = {
+        createdBy: uid,
+        ...req.body
+      };
+
+      const updatedHospital = (await DoctorModel.findByIdAndUpdate(id, toUpdate, { new: true }));
+
+      res.json(updatedHospital);
     } catch (error) {
       sendError(res, error);
     }
@@ -88,6 +115,14 @@ class DoctorRoutes {
 
   private async deleteDoctor(req: Request, res: Response) {
     try {
+      const id = req.params['id'];
+      const doctor = await DoctorModel.findById(id);
+
+      if (!doctor) return res.status(400).json({ msg: 'Doctor no encontrado' });
+
+      const deletedDoctor = await DoctorModel.findByIdAndDelete(id);
+
+      res.json(deletedDoctor);
     } catch (error) {
       sendError(res, error);
     }

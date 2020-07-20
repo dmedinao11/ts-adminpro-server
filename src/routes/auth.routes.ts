@@ -8,7 +8,7 @@ import UserModel from "../database/models/user.model";
 //Utilities
 import bcrypt from "bcryptjs";
 import { sendError } from "./index.routes";
-import { fieldsValidators } from "../middlewares/middlewares";
+import { fieldsValidators, tokenValidator } from '../middlewares/middlewares';
 import JWT from "../helpers/jwt.helper";
 import { googleSignIn } from '../helpers/login.helper';
 
@@ -39,6 +39,13 @@ class AuthRoutes {
         fieldsValidators,
       ],
       this.doLoginGoogle
+    );
+    router.get(
+      `${this.URI}/renew`,
+      [
+        tokenValidator
+      ],
+      this.renewToken
     );
 
     return router;
@@ -71,6 +78,13 @@ class AuthRoutes {
     let { msg, status, doc } = await googleSignIn(token);
     res.status(status).json({ msg, ...doc });
   }
+
+  public async renewToken(req: Request, res: Response): Promise<void> {
+    const uid = req['uid'];
+    const jwt = new JWT();
+    const token = await jwt.generate(uid);
+    res.json({ token });
+  };
 }
 
 const authRoutes = new AuthRoutes();
