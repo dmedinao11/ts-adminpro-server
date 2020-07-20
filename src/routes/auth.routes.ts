@@ -10,6 +10,7 @@ import bcrypt from "bcryptjs";
 import { sendError } from "./index.routes";
 import { fieldsValidators } from "../middlewares/middlewares";
 import JWT from "../helpers/jwt.helper";
+import { googleSignIn } from '../helpers/login.helper';
 
 class AuthRoutes {
   public router: Router;
@@ -30,6 +31,14 @@ class AuthRoutes {
         fieldsValidators,
       ],
       this.doLogin
+    );
+    router.post(
+      `${this.URI}/google`,
+      [
+        check("token", "El token de Google es requerido").not().isEmpty(),
+        fieldsValidators,
+      ],
+      this.doLoginGoogle
     );
 
     return router;
@@ -55,6 +64,12 @@ class AuthRoutes {
     } catch (error) {
       sendError(res, error);
     }
+  }
+
+  public async doLoginGoogle(req: Request, res: Response): Promise<void> {
+    const token = req.body['token'];
+    let { msg, status, doc } = await googleSignIn(token);
+    res.status(status).json({ msg, ...doc });
   }
 }
 

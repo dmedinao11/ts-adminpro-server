@@ -39,6 +39,9 @@ class Server {
         throw new Error("[DB] Error in database connection");
       });
 
+    //Public folder
+    this.app.use(express.static('public'));
+
     //Routes
     this.app.use(IndexRoutes);
   }

@@ -53,9 +53,9 @@ class SearchRoutes {
       ] as fileUpload.UploadedFile;
 
       const uploader = new UploadHelper();
-      const { result, doc, status } = await uploader.save(file, collection, id);
+      const { msg, doc, status } = await uploader.save(file, collection, id);
 
-      res.status(status).json({ msg: result, entity: doc });
+      res.status(status).json({ msg, entity: doc });
     } catch (error) {
       sendError(res, error);
     }

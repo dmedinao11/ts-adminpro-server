@@ -5,7 +5,9 @@ import fs from "fs";
 import UserModel from "../database/models/user.model";
 import DoctorModel from "../database/models/doctor.model";
 import HospitalModel from "../database/models/hospital.model";
+import { IResponse } from '../models/http.models';
 
+//Utilities
 import fileUpload from "express-fileupload";
 import { v4 as uuidv } from "uuid";
 
@@ -19,14 +21,14 @@ export default class UploadHelper {
     file: fileUpload.UploadedFile,
     collection: string,
     id: string
-  ): Promise<{ status: number; result: string; doc?: object }> {
+  ): Promise<IResponse> {
     const cutName = file.name.split(".");
     const fileExtension = cutName[cutName.length - 1];
 
     if (!this.VALID_EXTENSIONS.includes(fileExtension))
       return {
         status: 400,
-        result:
+        msg:
           "La imagen debe tener una extensión válida ('png', 'jpg', 'jpeg', 'gif')",
       };
 
@@ -38,7 +40,7 @@ export default class UploadHelper {
       switch (collection) {
         case "users":
           const user = await UserModel.findById(id);
-          if (!user) return { status: 400, result: "Usuario no encontrado" };
+          if (!user) return { status: 400, msg: "Usuario no encontrado" };
 
           const olderImgUser = user["img"];
           const olderPathUser = `src/uploads/${collection}/${olderImgUser}`;
@@ -53,7 +55,7 @@ export default class UploadHelper {
 
         case "doctors":
           const doctor = await DoctorModel.findById(id);
-          if (!doctor) return { status: 400, result: "Usuario no encontrado" };
+          if (!doctor) return { status: 400, msg: "Usuario no encontrado" };
 
           console.log("No debería");
 
@@ -71,7 +73,7 @@ export default class UploadHelper {
         case "hospitals":
           const hospital = await HospitalModel.findById(id);
           if (!hospital)
-            return { status: 400, result: "Usuario no encontrado" };
+            return { status: 400, msg: "Usuario no encontrado" };
 
           const olderImgHospital = hospital["img"];
           const olderPathHospital = `src/uploads/${collection}/${olderImgHospital}`;
@@ -97,14 +99,14 @@ export default class UploadHelper {
 
       if (saveResult)
         return {
-          result: saveResult,
+          msg: saveResult,
           status: 500,
         };
 
-      return { status: 200, result: "Imagen actualizada con éxito", doc };
+      return { status: 200, msg: "Imagen actualizada con éxito", doc };
     } catch (error) {
       console.log(error);
-      return { result: "Error interno, revisar logs", status: 500 };
+      return { msg: "Error interno, revisar logs", status: 500 };
     }
   }
 }
