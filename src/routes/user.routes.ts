@@ -67,7 +67,9 @@ class UserRoutes {
       const skipFrom = Number(req.query["from"]) || 0;
 
       const [users, total] = await Promise.all([
-        UserModel.find({}, "name role email img").skip(skipFrom).limit(5),
+        UserModel.find({}, "name role email img googleAuth")
+          .skip(skipFrom)
+          .limit(5),
         UserModel.count({}),
       ]);
 

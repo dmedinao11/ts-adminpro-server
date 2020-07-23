@@ -43,7 +43,7 @@ export default class UploadHelper {
           if (!user) return { status: 400, msg: "Usuario no encontrado" };
 
           const olderImgUser = user["img"];
-          const olderPathUser = `src/uploads/${collection}/${olderImgUser}`;
+          const olderPathUser = `uploads/${collection}/${olderImgUser}`;
 
           //Deleting stored older image
           if (olderImgUser && fs.existsSync(olderPathUser))
@@ -60,7 +60,7 @@ export default class UploadHelper {
           console.log("No debería");
 
           const olderImgDoctor = doctor["img"];
-          const olderPathDoctor = `src/uploads/${collection}/${olderImgDoctor}`;
+          const olderPathDoctor = `uploads/${collection}/${olderImgDoctor}`;
 
           //Deleting stored older image
           if (olderImgDoctor && fs.existsSync(olderPathDoctor))
@@ -75,7 +75,7 @@ export default class UploadHelper {
           if (!hospital) return { status: 400, msg: "Hospital no encontrado" };
 
           const olderImgHospital = hospital["img"];
-          const olderPathHospital = `src/uploads/${collection}/${olderImgHospital}`;
+          const olderPathHospital = `uploads/${collection}/${olderImgHospital}`;
 
           //Deleting stored older image
           if (olderImgHospital && fs.existsSync(olderPathHospital))

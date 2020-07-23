@@ -8,9 +8,9 @@ import UserModel from "../database/models/user.model";
 //Utilities
 import bcrypt from "bcryptjs";
 import { sendError } from "./index.routes";
-import { fieldsValidators, tokenValidator } from '../middlewares/middlewares';
+import { fieldsValidators, tokenValidator } from "../middlewares/middlewares";
 import JWT from "../helpers/jwt.helper";
-import { googleSignIn } from '../helpers/login.helper';
+import { googleSignIn } from "../helpers/login.helper";
 
 class AuthRoutes {
   public router: Router;
@@ -40,13 +40,7 @@ class AuthRoutes {
       ],
       this.doLoginGoogle
     );
-    router.get(
-      `${this.URI}/renew`,
-      [
-        tokenValidator
-      ],
-      this.renewToken
-    );
+    router.get(`${this.URI}/renew`, [tokenValidator], this.renewToken);
 
     return router;
   }
@@ -74,17 +68,22 @@ class AuthRoutes {
   }
 
   public async doLoginGoogle(req: Request, res: Response): Promise<void> {
-    const token = req.body['token'];
+    const token = req.body["token"];
     let { msg, status, doc } = await googleSignIn(token);
     res.status(status).json({ msg, ...doc });
   }
 
   public async renewToken(req: Request, res: Response): Promise<void> {
-    const uid = req['uid'];
+    const uid = req["uid"];
     const jwt = new JWT();
-    const token = await jwt.generate(uid);
-    res.json({ token });
-  };
+
+    const [token, user] = await Promise.all([
+      jwt.generate(uid),
+      UserModel.findById(uid),
+    ]);
+
+    res.json({ token, user });
+  }
 }
 
 const authRoutes = new AuthRoutes();
