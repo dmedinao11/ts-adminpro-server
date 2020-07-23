@@ -113,15 +113,23 @@ class UserRoutes {
   private async putUser(req: Request, res: Response) {
     try {
       delete req.body.password;
-      delete req.body.googleAuth;
       const { uid, email } = req.body;
 
-      const userExists = await UserModel.findById(uid, "email");
+      const userExists = await UserModel.findById(uid);
 
       if (!userExists) {
         res.status(404).json({ msg: "El usuario a actualizar no existe" });
         return;
       }
+
+      console.log(userExists["email"]);
+
+      if (userExists["googleAuth"] && email != userExists["email"])
+        return res.status(400).json({
+          msg:
+            "El correo de una persona autenticada con Google, no se puede modificar",
+        });
+      delete req.body.googleAuth;
 
       if (
         email &&
