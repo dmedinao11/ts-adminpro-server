@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { validationResult } from "express-validator";
+import UserModel from "../database/models/user.model";
 import jwt from "jsonwebtoken";
 
 export const fieldsValidators = (
@@ -62,4 +63,57 @@ export const collectionValidator = (
     });
 
   next();
+};
+
+export const isAdminValidator = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const uid = req["uid"];
+
+  try {
+    const userDB = await UserModel.findById(uid);
+    if (!userDB) {
+      res.status(400).json({ msg: "Usuario no encontrado" });
+      return;
+    }
+    if (userDB["role"] != "ADMIN_ROLE") {
+      res
+        .status(403)
+        .json({ msg: "No cuenta con autorización para realizar la acción" });
+      return;
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ msg: "Error interno, revisar logs" });
+  }
+};
+
+export const isAdminValidatorAndNotEqual = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const uid = req["uid"];
+  const requestId = req.body["uid"];
+  console.log(uid, requestId);
+  try {
+    const userDB = await UserModel.findById(uid);
+    if (!userDB) {
+      res.status(400).json({ msg: "Usuario no encontrado" });
+      return;
+    }
+    if (userDB["role"] != "ADMIN_ROLE" && userDB["id"] != requestId) {
+      res
+        .status(403)
+        .json({ msg: "No cuenta con autorización para realizar la acción" });
+      return;
+    }
+
+    next();
+  } catch (error) {
+    res.status(500).json({ msg: "Error interno, revisar logs" });
+  }
 };

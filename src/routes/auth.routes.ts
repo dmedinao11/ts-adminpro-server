@@ -11,6 +11,7 @@ import { sendError } from "./index.routes";
 import { fieldsValidators, tokenValidator } from "../middlewares/middlewares";
 import JWT from "../helpers/jwt.helper";
 import { googleSignIn } from "../helpers/login.helper";
+import { getUserMenu } from "../helpers/menu-front";
 
 class AuthRoutes {
   public router: Router;
@@ -56,7 +57,12 @@ class AuthRoutes {
           const jwt = new JWT();
           const token = await jwt.generate(user["id"]);
 
-          res.json({ msg: `Bienvenido ${user["name"]}`, user, token });
+          res.json({
+            msg: `Bienvenido ${user["name"]}`,
+            user,
+            token,
+            menu: getUserMenu(user["role"]),
+          });
           return;
         }
       }
@@ -82,7 +88,7 @@ class AuthRoutes {
       UserModel.findById(uid),
     ]);
 
-    res.json({ token, user });
+    res.json({ token, user, menu: getUserMenu(user["role"]) });
   }
 }
 

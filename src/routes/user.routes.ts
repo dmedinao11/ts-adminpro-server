@@ -8,7 +8,12 @@ import UserModel from "../database/models/user.model";
 //Utilities
 import bcrypt from "bcryptjs";
 import { sendError } from "./index.routes";
-import { fieldsValidators, tokenValidator } from "../middlewares/middlewares";
+import {
+  fieldsValidators,
+  tokenValidator,
+  isAdminValidator,
+  isAdminValidatorAndNotEqual,
+} from "../middlewares/middlewares";
 import JWT from "../helpers/jwt.helper";
 
 class UserRoutes {
@@ -38,6 +43,7 @@ class UserRoutes {
       this.URI,
       [
         tokenValidator,
+        isAdminValidatorAndNotEqual,
         check("uid", "El identificador de usuario es necesario")
           .not()
           .isEmpty(),
@@ -50,6 +56,7 @@ class UserRoutes {
       `${this.URI}/:uid`,
       [
         tokenValidator,
+        isAdminValidator,
         check("uid", "El identificador de usuario es necesario")
           .not()
           .isEmpty(),
@@ -121,8 +128,6 @@ class UserRoutes {
         res.status(404).json({ msg: "El usuario a actualizar no existe" });
         return;
       }
-
-      console.log(userExists["email"]);
 
       if (userExists["googleAuth"] && email != userExists["email"])
         return res.status(400).json({
